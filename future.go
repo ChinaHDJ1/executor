@@ -26,6 +26,14 @@ func(f *Future) run() {
 	f.value = f.task()
 }
 
+func(f *Future) Error() error {
+	return f.err
+}
+
+func(f *Future) Value() interface{} {
+	return f.value
+}
+
 func(f *Future) Done() <-chan bool {
 	return f.done
 }
