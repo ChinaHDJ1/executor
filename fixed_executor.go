@@ -2,13 +2,10 @@ package executor
 
 import (
 	"sync"
-	"fmt"
 )
 
 type FixedExecutor struct {
 	buf []*Future
-	index	int
-	workerSize	int
 	taskNotify	chan *Future
 	closeNotify chan bool
 	closed bool
@@ -17,7 +14,6 @@ type FixedExecutor struct {
 	tail 	int
 	count int
 
-	mu	sync.Mutex
 	cond *sync.Cond
 }
 
@@ -28,7 +24,6 @@ func NewFixedExecutor(workerSize int) *FixedExecutor {
 
 	executor := new(FixedExecutor)
 	executor.buf = make([]*Future, 32, 32)
-	executor.workerSize	= workerSize
 	executor.taskNotify = make(chan *Future, workerSize * 4)
 	executor.closeNotify = make(chan bool)
 	executor.cond = sync.NewCond(&sync.Mutex{})
@@ -37,7 +32,6 @@ func NewFixedExecutor(workerSize int) *FixedExecutor {
 		for {
 			select {
 			case <-executor.closeNotify:
-				fmt.Println("close")
 				return
 			default:
 				executor.taskNotify <- executor.shift()
