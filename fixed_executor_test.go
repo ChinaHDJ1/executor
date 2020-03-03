@@ -11,8 +11,9 @@ func TestFixedExecutor(t *testing.T)  {
 
 	var wg sync.WaitGroup
 
-	for i := 0; i < 5000; i++ {
+	for i := 0; i < 100; i++ {
 		wg.Add(1)
+
 		go func(i int) {
 			future := executor.Execute(func() interface{} {
 				time.Sleep(1 * time.Second)
